@@ -1,0 +1,39 @@
+services:
+  mqtt:
+    image: "eclipse-mosquitto:latest"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+    ports:
+      - "1883:1883"  # Puerto MQTT estándar
+    environment:
+      - TZ=America/Argentina/Buenos_Aires
+  influxdb:
+    image: influxdb:2.7
+    ports:
+      - "8086:8086"
+    volumes:
+      - ./influxdb_data:/var/lib/influxdb2
+  nodered:
+    image: nodered/node-red
+    environment:
+      - TZ=America/Argentina/Buenos_Aires
+    ports:
+      - "1880:1880" # Puerto acceso a Nodered
+    volumes:
+      - ./node-red-data:/data
+      - /dev/snd:/dev/snd
+    links:
+      - mqtt
+      - influxdb
+  grafana:
+    image: grafana/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    ports:
+      - "3000:3000" # Puerto acceso a Grafana
+    links:
+      - influxdb
+    volumes:
+      - ./grafana-storage:/var/lib/grafana

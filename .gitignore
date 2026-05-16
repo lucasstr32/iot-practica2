@@ -1,0 +1,8 @@
+# Ignorar carpetas de datos generadas por Docker
+grafana-storage/
+influxdb_data/
+node-red-data/
+
+# Ignorar datos de mosquitto pero mantener la carpeta de configuración
+mosquitto/data/
+mosquitto/log/
