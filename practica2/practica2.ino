@@ -5,7 +5,11 @@
 #include <ArduinoJson.h>
 #include <DHT.h>
 
+<<<<<<< HEAD
 const int     DHTPIN = 23;
+=======
+const int DHTPIN = 22;
+>>>>>>> d7173c7 (se añade sensado de temperatura y humedad con dht11)
 const uint8_t DHTTYPE = DHT11;
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -14,9 +18,9 @@ char pass_buffer[64];
 char mqtt_buffer[32];
 
 // Conexión WiFi y Broker MQTT
-const char* ssid = ssid_buffer;
-const char* password = pass_buffer;
-const char* mqtt_server = mqtt_buffer;
+const char* SSID = ssid_buffer;
+const char* PASSWORD = pass_buffer;
+const char* MQTTSERVER = mqtt_buffer;
 
 // Cliente MQTT
 WiFiClient espClient;
@@ -82,12 +86,15 @@ void setup() {
   
   Serial.println("\n--- Iniciando ESP32 ---");
   
+  dht.begin();
+  Serial.println("DHT inicializado");
+
   if(cargarCredenciales()){
     // Conexión WiFi
     Serial.print("Conectando a la red WiFi: ");
-    Serial.println(ssid);
+    Serial.println(SSID);
     
-    WiFi.begin(ssid, password);
+    WiFi.begin(SSID, PASSWORD);
     while (WiFi.status() != WL_CONNECTED) {
       delay(500);
       Serial.print("."); // Efecto visual de carga
@@ -99,7 +106,7 @@ void setup() {
   Serial.println(WiFi.localIP());
 
   // Configuración del servidor MQTT
-  client.setServer(mqtt_server, 1883);
+  client.setServer(MQTTSERVER, 1883);
 }
 
 void loop() {
@@ -109,6 +116,7 @@ void loop() {
   }
   client.loop(); // Mantiene viva la conexión y procesa mensajes entrantes
 
+<<<<<<< HEAD
   //Temperatura y humedad tomados del sensor
   float temp = dht.readTemperature();
   float hum = dht.readHumidity();
@@ -116,9 +124,16 @@ void loop() {
   // Simulación calidad aire
   int cal = random(10, 100);
 
+=======
+  // Simulación de datos
+  float temp = dht.readTemperature(); 
+  float hum = dht.readHumidity();
+  int cal = (int)(hum/temp);
+>>>>>>> d7173c7 (se añade sensado de temperatura y humedad con dht11)
 
   char msg[100];
-  sprintf(msg, "{\"temp\": %.2f, \"hum\": %.2f, \"cal\": %d}", temp, hum, cal);
+  sprintf(msg, "{\"temp\": %.2f, \"hum\": %.2f, \"cal\": %d}", 
+                temp, hum, cal);
   // Intentar publicar el mensaje
   Serial.print("Enviando datos al tópico 'sensor/ambiente': ");
   Serial.println(msg);
