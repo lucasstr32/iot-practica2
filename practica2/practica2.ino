@@ -1,11 +1,17 @@
 // Librerías necesarias
 #include <WiFi.h>
 #include <PubSubClient.h>
+#include <DHT.h>
 
 // Conexión WiFi y Broker MQTT
-const char* ssid = "Fibertel WiFi604 2.4GHz";
-const char* password = "00444415607";
-const char* mqtt_server = "192.168.0.146";
+const char* ssid = "WiFi de la Bestia Bob";
+const char* password = "0142051897";
+const char* mqtt_server = "192.168.0.187";
+
+#define DHTPIN 23        // GPIO23
+#define DHTTYPE DHT11
+DHT dht(DHTPIN, DHTTYPE);
+
 
 // Cliente MQTT
 WiFiClient espClient;
@@ -59,10 +65,13 @@ void loop() {
   }
   client.loop(); // Mantiene viva la conexión y procesa mensajes entrantes
 
-  // Simulación de datos
-  float temp = 24.5; 
-  float hum = 30.0;
-  int cal = 10;
+  //Temperatura y humedad tomados del sensor
+  float temp = dht.readTemperature();
+  float hum = dht.readHumidity();
+
+  // Simulación calidad aire
+  int cal = random(10, 100);
+
 
   char msg[100];
   sprintf(msg, "{\"temp\": %.2f, \"hum\": %.2f, \"cal\": %d}", temp, hum, cal);
