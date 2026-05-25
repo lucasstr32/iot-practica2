@@ -5,11 +5,8 @@
 #include <ArduinoJson.h>
 #include <DHT.h>
 
-<<<<<<< HEAD
+
 const int     DHTPIN = 23;
-=======
-const int DHTPIN = 22;
->>>>>>> d7173c7 (se añade sensado de temperatura y humedad con dht11)
 const uint8_t DHTTYPE = DHT11;
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -28,23 +25,23 @@ PubSubClient client(espClient);
 
 
 bool cargarCredenciales() {
-  // 1. Inicializar LittleFS
+  // Inicializar LittleFS
   if (!LittleFS.begin(true)) {
     Serial.println("[ERROR] No se pudo montar el sistema de archivos LittleFS");
     return false;
   }
 
-  // 2. Abrir el archivo config.json en modo lectura ("r")
+  // Abrir el archivo config.json en modo lectura ("r")
   File configFile = LittleFS.open("/credentials.json", "r");
   if (!configFile) {
     Serial.println("[ERROR] No se encontró el archivo credentials.json");
     return false;
   }
 
-  // 3. Reservar memoria para parsear el JSON
+  // Reservar memoria para parsear el JSON
   JsonDocument doc;
 
-  // 4. Deserializar el archivo JSON
+  // Deserializar el archivo JSON
   DeserializationError error = deserializeJson(doc, configFile);
   configFile.close(); // Cerramos el archivo inmediatamente para liberar recursos
 
@@ -54,7 +51,7 @@ bool cargarCredenciales() {
     return false;
   }
 
-  // 5. Asignar los valores del JSON a nuestras variables globales
+  // Asignar los valores del JSON a nuestras variables globales
   strlcpy(ssid_buffer, doc["ssid"] | "", sizeof(ssid_buffer));
   strlcpy(pass_buffer, doc["password"] | "", sizeof(pass_buffer));
   strlcpy(mqtt_buffer, doc["mqtt_server"] | "", sizeof(mqtt_buffer));
@@ -116,7 +113,7 @@ void loop() {
   }
   client.loop(); // Mantiene viva la conexión y procesa mensajes entrantes
 
-<<<<<<< HEAD
+
   //Temperatura y humedad tomados del sensor
   float temp = dht.readTemperature();
   float hum = dht.readHumidity();
@@ -124,12 +121,6 @@ void loop() {
   // Simulación calidad aire
   int cal = random(10, 100);
 
-=======
-  // Simulación de datos
-  float temp = dht.readTemperature(); 
-  float hum = dht.readHumidity();
-  int cal = (int)(hum/temp);
->>>>>>> d7173c7 (se añade sensado de temperatura y humedad con dht11)
 
   char msg[100];
   sprintf(msg, "{\"temp\": %.2f, \"hum\": %.2f, \"cal\": %d}", 
